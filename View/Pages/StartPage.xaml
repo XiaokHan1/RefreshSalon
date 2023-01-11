@@ -1,0 +1,21 @@
+﻿<Page x:Class="RefreshSalon.View.Pages.StartPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RefreshSalon.View.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="769" d:DesignWidth="1034"
+      Title="StartPage">
+
+    <Grid>
+        <Image Grid.Column="1" Source="/Resources/SK.png" Stretch="Fill" Grid.RowSpan="2" />
+
+        <StackPanel Margin="80 80 0 0" Grid.Column="1">
+            <TextBlock FontSize="60" Foreground="#FF7D3CBD" Text="Салон красоты"
+                       FontStyle="Italic" TextDecorations="Underline"/>
+            <TextBlock FontSize="60" Foreground="#FF7D3CBD" Text="Перезагрузка" 
+                       FontStyle="Italic" TextDecorations="Underline"/>
+        </StackPanel>
+    </Grid>
+</Page>
