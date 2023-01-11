@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище BalashovSalonModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище BalashovSalonModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Material">
           <Key>
             <PropertyRef Name="Id" />
@@ -27,6 +27,16 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="Uchet">
           <Key>
             <PropertyRef Name="Id" />
@@ -38,6 +48,17 @@
           <Property Name="Zena" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="Kolvo" Type="int" Nullable="false" />
           <Property Name="Summa" Type="decimal" Precision="29" Scale="2" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <!--Ошибки, обнаруженные при создании:
+предупреждение 6002: В таблице или представлении "BalashovSalon.dbo.View_1" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
+        <EntityType Name="View_1">
+          <Key>
+            <PropertyRef Name="Datelspol" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Datelspol" Type="date" Nullable="false" />
+          <Property Name="Summa" Type="decimal" Precision="29" Scale="2" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <Association Name="FK_Material_Proizvoditel">
           <End Role="Proizvoditel" Type="Self.Proizvoditel" Multiplicity="1" />
@@ -79,7 +100,15 @@
           <EntitySet Name="Material" EntityType="Self.Material" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Proizvoditel" EntityType="Self.Proizvoditel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sotrudnik" EntityType="Self.Sotrudnik" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Uchet" EntityType="Self.Uchet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="View_1" EntityType="Self.View_1" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_1].[Datelspol] AS [Datelspol], 
+    [View_1].[Summa] AS [Summa], 
+    [View_1].[Name] AS [Name]
+    FROM [dbo].[View_1] AS [View_1]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_Material_Proizvoditel" Association="Self.FK_Material_Proizvoditel">
             <End Role="Proizvoditel" EntitySet="Proizvoditel" />
             <End Role="Material" EntitySet="Material" />
@@ -93,36 +122,65 @@
             <End Role="Uchet" EntitySet="Uchet" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="BalashovSalonModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="BalashovSalonEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Material" EntityType="BalashovSalonModel.Material" />
+          <EntitySet Name="Proizvoditel" EntityType="BalashovSalonModel.Proizvoditel" />
+          <EntitySet Name="Sotrudnik" EntityType="BalashovSalonModel.Sotrudnik" />
+          <EntitySet Name="sysdiagrams" EntityType="BalashovSalonModel.sysdiagrams" />
+          <EntitySet Name="Uchet" EntityType="BalashovSalonModel.Uchet" />
+          <EntitySet Name="View_1" EntityType="BalashovSalonModel.View_1" />
+          <AssociationSet Name="FK_Material_Proizvoditel" Association="BalashovSalonModel.FK_Material_Proizvoditel">
+            <End Role="Proizvoditel" EntitySet="Proizvoditel" />
+            <End Role="Material" EntitySet="Material" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Uchet_Material" Association="BalashovSalonModel.FK_Uchet_Material">
+            <End Role="Material" EntitySet="Material" />
+            <End Role="Uchet" EntitySet="Uchet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Uchet_Sotrudnik" Association="BalashovSalonModel.FK_Uchet_Sotrudnik">
+            <End Role="Sotrudnik" EntitySet="Sotrudnik" />
+            <End Role="Uchet" EntitySet="Uchet" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Material">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IdProizvoditel" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Proizvoditel" Relationship="Self.FK_Material_Proizvoditel" FromRole="Material" ToRole="Proizvoditel" />
-          <NavigationProperty Name="Uchet" Relationship="Self.FK_Uchet_Material" FromRole="Material" ToRole="Uchet" />
+          <NavigationProperty Name="Proizvoditel" Relationship="BalashovSalonModel.FK_Material_Proizvoditel" FromRole="Material" ToRole="Proizvoditel" />
+          <NavigationProperty Name="Uchet" Relationship="BalashovSalonModel.FK_Uchet_Material" FromRole="Material" ToRole="Uchet" />
         </EntityType>
         <EntityType Name="Proizvoditel">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Material" Relationship="Self.FK_Material_Proizvoditel" FromRole="Proizvoditel" ToRole="Material" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Material" Relationship="BalashovSalonModel.FK_Material_Proizvoditel" FromRole="Proizvoditel" ToRole="Material" />
         </EntityType>
         <EntityType Name="Sotrudnik">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Uchet" Relationship="Self.FK_Uchet_Sotrudnik" FromRole="Sotrudnik" ToRole="Uchet" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Uchet" Relationship="BalashovSalonModel.FK_Uchet_Sotrudnik" FromRole="Sotrudnik" ToRole="Uchet" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="Uchet">
           <Key>
@@ -132,15 +190,24 @@
           <Property Name="Datelspol" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="IdSotrudnik" Type="Int32" Nullable="false" />
           <Property Name="IdMaterial" Type="Int32" Nullable="false" />
-          <Property Name="Zena" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Zena" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="Kolvo" Type="Int32" Nullable="false" />
           <Property Name="Summa" Type="Decimal" Precision="29" Scale="2" annotation:StoreGeneratedPattern="Computed" />
-          <NavigationProperty Name="Material" Relationship="Self.FK_Uchet_Material" FromRole="Uchet" ToRole="Material" />
-          <NavigationProperty Name="Sotrudnik" Relationship="Self.FK_Uchet_Sotrudnik" FromRole="Uchet" ToRole="Sotrudnik" />
+          <NavigationProperty Name="Material" Relationship="BalashovSalonModel.FK_Uchet_Material" FromRole="Uchet" ToRole="Material" />
+          <NavigationProperty Name="Sotrudnik" Relationship="BalashovSalonModel.FK_Uchet_Sotrudnik" FromRole="Uchet" ToRole="Sotrudnik" />
+        </EntityType>
+        <EntityType Name="View_1">
+          <Key>
+            <PropertyRef Name="Datelspol" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Datelspol" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Summa" Type="Decimal" Precision="29" Scale="2" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Material_Proizvoditel">
-          <End Role="Proizvoditel" Type="Self.Proizvoditel" Multiplicity="1" />
-          <End Role="Material" Type="Self.Material" Multiplicity="*" />
+          <End Type="BalashovSalonModel.Proizvoditel" Role="Proizvoditel" Multiplicity="1" />
+          <End Type="BalashovSalonModel.Material" Role="Material" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Proizvoditel">
               <PropertyRef Name="Id" />
@@ -151,8 +218,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Uchet_Material">
-          <End Role="Material" Type="Self.Material" Multiplicity="1" />
-          <End Role="Uchet" Type="Self.Uchet" Multiplicity="*" />
+          <End Type="BalashovSalonModel.Material" Role="Material" Multiplicity="1" />
+          <End Type="BalashovSalonModel.Uchet" Role="Uchet" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Material">
               <PropertyRef Name="Id" />
@@ -163,8 +230,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Uchet_Sotrudnik">
-          <End Role="Sotrudnik" Type="Self.Sotrudnik" Multiplicity="1" />
-          <End Role="Uchet" Type="Self.Uchet" Multiplicity="*" />
+          <End Type="BalashovSalonModel.Sotrudnik" Role="Sotrudnik" Multiplicity="1" />
+          <End Type="BalashovSalonModel.Uchet" Role="Uchet" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Sotrudnik">
               <PropertyRef Name="Id" />
@@ -174,25 +241,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="BalashovSalonEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Material" EntityType="Self.Material" />
-          <EntitySet Name="Proizvoditel" EntityType="Self.Proizvoditel" />
-          <EntitySet Name="Sotrudnik" EntityType="Self.Sotrudnik" />
-          <EntitySet Name="Uchet" EntityType="Self.Uchet" />
-          <AssociationSet Name="FK_Material_Proizvoditel" Association="Self.FK_Material_Proizvoditel">
-            <End Role="Proizvoditel" EntitySet="Proizvoditel" />
-            <End Role="Material" EntitySet="Material" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Uchet_Material" Association="Self.FK_Uchet_Material">
-            <End Role="Material" EntitySet="Material" />
-            <End Role="Uchet" EntitySet="Uchet" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Uchet_Sotrudnik" Association="Self.FK_Uchet_Sotrudnik">
-            <End Role="Sotrudnik" EntitySet="Sotrudnik" />
-            <End Role="Uchet" EntitySet="Uchet" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -201,38 +250,58 @@
           <EntitySetMapping Name="Material">
             <EntityTypeMapping TypeName="BalashovSalonModel.Material">
               <MappingFragment StoreEntitySet="Material">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IdProizvoditel" ColumnName="IdProizvoditel" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Proizvoditel">
             <EntityTypeMapping TypeName="BalashovSalonModel.Proizvoditel">
               <MappingFragment StoreEntitySet="Proizvoditel">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Sotrudnik">
             <EntityTypeMapping TypeName="BalashovSalonModel.Sotrudnik">
               <MappingFragment StoreEntitySet="Sotrudnik">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="BalashovSalonModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Uchet">
             <EntityTypeMapping TypeName="BalashovSalonModel.Uchet">
               <MappingFragment StoreEntitySet="Uchet">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Datelspol" ColumnName="Datelspol" />
-                <ScalarProperty Name="IdSotrudnik" ColumnName="IdSotrudnik" />
-                <ScalarProperty Name="IdMaterial" ColumnName="IdMaterial" />
-                <ScalarProperty Name="Zena" ColumnName="Zena" />
-                <ScalarProperty Name="Kolvo" ColumnName="Kolvo" />
                 <ScalarProperty Name="Summa" ColumnName="Summa" />
+                <ScalarProperty Name="Kolvo" ColumnName="Kolvo" />
+                <ScalarProperty Name="Zena" ColumnName="Zena" />
+                <ScalarProperty Name="IdMaterial" ColumnName="IdMaterial" />
+                <ScalarProperty Name="IdSotrudnik" ColumnName="IdSotrudnik" />
+                <ScalarProperty Name="Datelspol" ColumnName="Datelspol" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_1">
+            <EntityTypeMapping TypeName="BalashovSalonModel.View_1">
+              <MappingFragment StoreEntitySet="View_1">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Summa" ColumnName="Summa" />
+                <ScalarProperty Name="Datelspol" ColumnName="Datelspol" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

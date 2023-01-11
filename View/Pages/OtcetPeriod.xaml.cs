@@ -41,8 +41,8 @@ namespace RefreshSalon.View.Pages
             var a = (DateTime)Pik1.SelectedDate;
             var b = (DateTime)Pik2.SelectedDate;
 
-            var qwerty = AppData.BS.salonEntities.Uchet.Where(x => x.Datelspol >= a && x.Datelspol <= b)
-                .GroupBy(y => y.IdSotrudnik).Select(q => new { Сотрудник = q.Key, Сумма = q.Sum(s => s.Summa) })
+            var qwerty = AppData.BS.salonEntities.View_1.Where(x => x.Datelspol >= a && x.Datelspol <= b)
+                .GroupBy(y => y.Name).Select(q => new { Сотрудник = q.Key, Сумма = q.Sum(s => s.Summa) })
                 .OrderBy(i => i.Сотрудник);
 
             Dtg.ItemsSource = qwerty.ToList();

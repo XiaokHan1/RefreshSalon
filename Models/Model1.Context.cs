@@ -28,6 +28,8 @@ namespace RefreshSalon.Models
         public virtual DbSet<Material> Material { get; set; }
         public virtual DbSet<Proizvoditel> Proizvoditel { get; set; }
         public virtual DbSet<Sotrudnik> Sotrudnik { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Uchet> Uchet { get; set; }
+        public virtual DbSet<View_1> View_1 { get; set; }
     }
 }
